@@ -1,99 +1,279 @@
-/* ============================================================
-   WITNEY MULAUDZI — PORTFOLIO JAVASCRIPT
-   script.js
-   ============================================================ */
+/*
+   WITNEY MULAUDZI - PORTFOLIO JAVASCRIPT
+*/
 
 
-/* ── 1. MOBILE NAV TOGGLE ─ */
-const toggle = document.getElementById('navToggle');
-const links  = document.getElementById('navLinks');
+/*
+   MOBILE NAVIGATION
+*/
 
-toggle.addEventListener('click', () => {
-  const open = links.classList.toggle('open');
-  toggle.classList.toggle('open', open);
-  toggle.setAttribute('aria-expanded', open);
-});
+const toggle = document.getElementById("navToggle");
+const links = document.getElementById("navLinks");
 
-// Close nav when any link is clicked
-links.querySelectorAll('a').forEach(a => {
-  a.addEventListener('click', () => {
-    links.classList.remove('open');
-    toggle.classList.remove('open');
-    toggle.setAttribute('aria-expanded', false);
-  });
-});
+if (toggle && links) {
+
+    toggle.addEventListener("click", () => {
+
+        const isOpen = links.classList.toggle("open");
+
+        toggle.classList.toggle("open", isOpen);
+
+        toggle.setAttribute(
+            "aria-expanded",
+            isOpen.toString()
+        );
+
+    });
 
 
-/* ── 2. SCROLL REVEAL + SKILL BARS ──────────────────────────── */
-const revealObserver = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (!entry.isIntersecting) return;
+    /* Close mobile navigation when a link is clicked */
 
-    const el = entry.target;
-    el.classList.add('visible');
+    links.querySelectorAll("a").forEach((link) => {
 
-    // Animate skill bar fill when the card becomes visible
-    if (el.classList.contains('skill-card')) {
-      const fill  = el.querySelector('.skill-card__fill');
-      const level = el.dataset.level || '0';
-      setTimeout(() => {
-        fill.style.width = level + '%';
-      }, 100);
+        link.addEventListener("click", () => {
+
+            links.classList.remove("open");
+
+            toggle.classList.remove("open");
+
+            toggle.setAttribute(
+                "aria-expanded",
+                "false"
+            );
+
+        });
+
+    });
+
+}
+
+
+/*
+   SCROLL REVEAL AND SKILL BAR ANIMATION
+*/
+
+const revealObserver = new IntersectionObserver(
+
+    (entries, observer) => {
+
+        entries.forEach((entry) => {
+
+            if (!entry.isIntersecting) {
+                return;
+            }
+
+
+            const element = entry.target;
+
+            element.classList.add("visible");
+
+
+            /* Animate skill bars */
+
+            if (element.classList.contains("skill-card")) {
+
+                const fill =
+                    element.querySelector(
+                        ".skill-card__fill"
+                    );
+
+                const level =
+                    element.dataset.level || "0";
+
+
+                if (fill) {
+
+                    setTimeout(() => {
+
+                        fill.style.width =
+                            `${level}%`;
+
+                    }, 100);
+
+                }
+
+            }
+
+
+            observer.unobserve(element);
+
+        });
+
+    },
+
+    {
+        threshold: 0.15
     }
 
-    revealObserver.unobserve(el);
-  });
-}, { threshold: 0.15 });
-
-// Observe all scroll-reveal elements, skill cards, and project cards
-document.querySelectorAll('.reveal, .skill-card, .project-card').forEach(el => {
-  revealObserver.observe(el);
-});
+);
 
 
-/* ── 3. ANIMATED NUMBER COUNTERS ─────────────────────────────── */
-const counterObserver = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (!entry.isIntersecting) return;
+/* Observe elements */
 
-    const el     = entry.target;
-    const target = parseInt(el.dataset.count, 10);
-    let current  = 0;
-    const step   = Math.ceil(target / 30);
+document
+    .querySelectorAll(
+        ".reveal, .skill-card, .project-card"
+    )
+    .forEach((element) => {
 
-    const timer = setInterval(() => {
-      current = Math.min(current + step, target);
-      el.textContent = current;
-      if (current >= target) clearInterval(timer);
-    }, 40);
+        revealObserver.observe(element);
 
-    counterObserver.unobserve(el);
-  });
-}, { threshold: 0.5 });
-
-document.querySelectorAll('[data-count]').forEach(el => {
-  counterObserver.observe(el);
-});
+    });
 
 
-/* ── 4. ACTIVE NAV LINK HIGHLIGHT ON SCROLL ─────────────────── */
-const sections = document.querySelectorAll('section[id], header[id]');
-const navLinks = document.querySelectorAll('.nav__links a');
+/*
+   ANIMATED NUMBER COUNTERS
+*/
 
-const highlightNav = () => {
-  let current = '';
+const counterObserver = new IntersectionObserver(
 
-  sections.forEach(sec => {
-    if (window.scrollY >= sec.offsetTop - 80) {
-      current = sec.id;
+    (entries, observer) => {
+
+        entries.forEach((entry) => {
+
+            if (!entry.isIntersecting) {
+                return;
+            }
+
+
+            const element = entry.target;
+
+            const target =
+                parseInt(
+                    element.dataset.count,
+                    10
+                );
+
+
+            let current = 0;
+
+
+            const step =
+                Math.max(
+                    1,
+                    Math.ceil(target / 30)
+                );
+
+
+            const timer = setInterval(() => {
+
+                current =
+                    Math.min(
+                        current + step,
+                        target
+                    );
+
+
+                element.textContent = current;
+
+
+                if (current >= target) {
+
+                    clearInterval(timer);
+
+                }
+
+            }, 40);
+
+
+            observer.unobserve(element);
+
+        });
+
+    },
+
+    {
+        threshold: 0.5
     }
-  });
 
-  navLinks.forEach(a => {
-    a.style.color = a.getAttribute('href') === '#' + current
-      ? '#ffffff'
-      : '';
-  });
-};
+);
 
-window.addEventListener('scroll', highlightNav, { passive: true });
+
+/* Observe all counters */
+
+document
+    .querySelectorAll("[data-count]")
+    .forEach((element) => {
+
+        counterObserver.observe(element);
+
+    });
+
+
+/*
+   ACTIVE NAVIGATION LINK
+*/
+
+const sections =
+    document.querySelectorAll(
+        "section[id], header[id]"
+    );
+
+
+const navLinks =
+    document.querySelectorAll(
+        ".nav__links a"
+    );
+
+
+function highlightNav() {
+
+    let currentSection = "";
+
+
+    sections.forEach((section) => {
+
+        const sectionTop =
+            section.offsetTop - 100;
+
+
+        if (
+            window.scrollY >= sectionTop
+        ) {
+
+            currentSection =
+                section.id;
+
+        }
+
+    });
+
+
+    navLinks.forEach((link) => {
+
+        const target =
+            link.getAttribute("href");
+
+
+        if (
+            target ===
+            `#${currentSection}`
+        ) {
+
+            link.style.color = "#ffffff";
+
+        } else {
+
+            link.style.color = "";
+
+        }
+
+    });
+
+}
+
+
+/* Listen for page scrolling */
+
+window.addEventListener(
+    "scroll",
+    highlightNav,
+    {
+        passive: true
+    }
+);
+
+
+/* Set active navigation link on page load */
+
+highlightNav();
