@@ -792,6 +792,23 @@ i {
     font-size: 0.875rem;
 }
 
+/*
+Certificates
+*/
+.certificate-card {
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid #ddd;
+    margin-top: 20px;
+}
+
+.certificate-btn {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 10px 16px;
+    text-decoration: none;
+    border-radius: 8px;
+}
 
 /* 
    CONTACT
